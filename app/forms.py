@@ -1,0 +1,147 @@
+from django import forms
+from django.forms import ModelForm
+from .models import *
+from django.contrib.auth.models import User
+from django.contrib.auth.password_validation import validate_password
+
+
+# === LOGIN FORM === #
+class LoginForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Email Address"
+        })
+    )
+    password = forms.CharField(
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Password"
+        })
+    )
+
+
+
+
+# === USER CREATION === #
+class UserCreationForm(forms.Form):
+    email = forms.EmailField(
+        required=True,
+        widget=forms.EmailInput(attrs={
+            "placeholder": "Email Address"
+        })
+    )
+    password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Password"
+        })
+    )
+    confirm_password = forms.CharField(
+        required=True,
+        widget=forms.PasswordInput(attrs={
+            "placeholder": "Confirm Password"
+        })
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email", "").strip()
+        if not email:
+            raise forms.ValidationError("Invalid email.")
+        if User.objects.filter(username=email).exists():
+            raise forms.ValidationError("A User with that email already exists.")
+        return email
+    
+    def clean_password(self):
+        password = self.cleaned_data.get("password", "")
+        password = password.strip()
+        if not password:
+            raise forms.ValidationError("Invalid password.")
+        try:
+            validate_password(password)
+        except forms.ValidationError as e:
+            raise forms.ValidationError(e.messages)
+        return password
+    
+    def clean_confirm_password(self):
+        confirm_password = self.cleaned_data.get("confirm_password", "").strip()
+        if not confirm_password:
+            raise forms.ValidationError("Please confirm your password.")
+        return confirm_password
+
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get("password")
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError("Passwords do not match.")
+
+        return cleaned_data
+
+
+class UserClientCreationForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ['first_name', 'last_name']
+    first_name = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={
+        'placeholder': 'First Name'
+    }))
+    last_name = forms.CharField(max_length=20, required=True, widget=forms.TextInput(attrs={
+        'placeholder': 'Last Name'
+    }))
+
+
+
+
+# === CLIENT CREATION === #
+class AdditionalClientCreationForm(forms.ModelForm):
+    class Meta:
+        model = Client
+        fields = ['first_name', 'last_name', 'person_or_pet', 'species', 'gender']
+
+
+
+
+# === LOCATION CREATION === #
+class LocationCreationForm(forms.ModelForm):
+    class Meta:
+        model = Location
+        fields = ['client', 'street', 'street_ext', 'city', 'state', 'zip_code', 'country']
+
+    def __init__(self, *args, **kwargs):
+        profile=kwargs.pop('profile', None)
+        super().__init__(*args, **kwargs)
+
+        if profile:
+            self.fields['client'].queryset = Client.objects.filter(profile=profile)
+        else:
+            self.fields['client'].queryset = Client.objects.none()
+
+
+
+
+# === CLIENT WORKSHEET FORM === #
+class ClientWorksheet(ModelForm):
+    class Meta:
+        model = Client_Worksheet
+        fields = [
+            'client', 'date',
+            's1', 'm1', 'e1', 'p1',
+            'chakras', 'cords', 'how_many', 'to_whom', 
+            'hindrances', 'dark_ents', 'attacks', 'societal', 'viruses',
+            's2', 'm2', 'e2', 'p2',
+            'notes'
+        ]
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+        }
+
+        def __init__(self, *args, **kwargs): # REVIEW AND REVISE MAYBE
+            clients_queryset = kwargs.pop('clients_queryset', None)
+            super().__init__(*args, **kwargs)
+            if clients_queryset is not None:
+                self.fields['client'].queryset = clients_queryset
+
+
+
+
+# === LOCATION WORKSHEET FORM === #

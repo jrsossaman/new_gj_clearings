@@ -1,0 +1,49 @@
+# ========================
+# Python/Django specific
+# ========================
+
+# Python bytecode
+*.pyc
+__pycache__/
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Environment variables (Postgres credentials, secret keys, etc.)
+.env
+*.env
+
+# Logs
+*.log
+
+# Static files (collected via collectstatic)
+staticfiles/
+# or if you use /static/ for dev only:
+# /static/
+
+# Media uploads (optional: ignore if you store user uploads locally)
+media/
+
+# Database backups (you might have .sql dumps for Postgres)
+*.sql
+
+# ========================
+# IDEs / editors
+# ========================
+
+# VSCode
+.vscode/
+
+# PyCharm
+.idea/
+
+# vim / swap files
+*.swp
+
+# ========================
+# Django migrations
+# ========================
+# Keep migration files! Only ignore compiled Python files in migrations
+*/migrations/__pycache__/
