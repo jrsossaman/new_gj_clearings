@@ -74,16 +74,18 @@ class Client(models.Model):
     last_name = models.CharField(max_length=30, null=True)
     person_or_pet = models.CharField(
         max_length=20,
-        choices=SPECIES_TYPE_CHOICES, # see top of this file
+        choices=SPECIES_TYPE_CHOICES, # see 'client creation choices' top of this file
         default="person"
     )
     species = models.CharField(max_length=20, null=True)
     gender = models.CharField(
-        choices=GENDER_TYPE_CHOICES, # see top of this file
+        choices=GENDER_TYPE_CHOICES, # see 'client creation choices' top of this file
         null=True,
         default="",
     )
     is_user=models.BooleanField(default=False, editable=False)
+    is_active=models.BooleanField(default=True, editable=True)
+
 
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
@@ -125,18 +127,19 @@ class Client_Worksheet(models.Model):
 
     chakras = models.CharField(
         max_length=20,
-        choices=CHAKRA_TYPE_CHOICES,
+        choices=CHAKRA_TYPE_CHOICES, # see 'client worksheet choices' top of this file
         default="open"
     )
 
     cords = models.BooleanField(default=False)
     how_many = models.PositiveIntegerField(blank=True, null=True)
     to_whom = models.CharField(max_length=50, blank=True, null=True)
-    hindrances = models.BooleanField(default=False)
+
+#    hindrances = models.BooleanField(default=False)
     dark_ents = models.BooleanField(default=False)
     attacks = models.BooleanField(default=False)
     societal = models.BooleanField(default=False)
-    viruses = models.BooleanField(default=False)
+    infections = models.BooleanField(default=False)
 
     s2 = models.PositiveIntegerField(validators=[MaxValueValidator(999999)])
     m2 = models.PositiveIntegerField(validators=[MaxValueValidator(999999)])
@@ -166,7 +169,7 @@ class Location_Worksheet(models.Model):
 
     date = models.DateField
 
-    issues = models.BooleanField(default=False)
+#    issues = models.BooleanField(default=False)
     unwanted_energies = models.BooleanField(default=False)
     stuck_souls = models.BooleanField(default=False)
     portals = models.BooleanField(default=False)

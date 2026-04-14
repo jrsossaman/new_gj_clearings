@@ -145,3 +145,42 @@ class ClientWorksheet(ModelForm):
 
 
 # === LOCATION WORKSHEET FORM === #
+class LocationWorksheet(ModelForm):
+    class Meta:
+        model = Location_Worksheet
+        fields = [
+            'address', 'date',
+            'issues', 'unwanted_energies', 'stuck_souls', 'portals',
+            'protection',
+            'notes'
+        ]
+        widgets = {
+            'date': forms.DateInput(attrs={"type": "date"})
+        }
+
+        def __init__(self, *args, **kwargs):
+            locations_queryset = kwargs.pop('locations_queryset', None)
+            super().__init__(*args, **kwargs)
+            if locations_queryset is not None:
+                self.fields['address'].queryset = locations_queryset
+
+
+
+
+# === CONFIRM PASSWORD FORM === #
+class ConfirmPasswordForm(forms.Form):
+    password = forms.CharField(
+        widget=forms.PasswordInput,
+        label="Enter your password to confirm."
+    )
+
+
+
+
+# === CLIENT SELECT FORM === #
+class ClientSelectForm(forms.Form):
+    client = forms.ModelChoiceField(
+        queryset=Client.objects.filter(is_user=True),
+        empty_label="Select a client",
+        required=True,
+    )
