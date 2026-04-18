@@ -135,7 +135,6 @@ class Client_Worksheet(models.Model):
     how_many = models.PositiveIntegerField(blank=True, null=True)
     to_whom = models.CharField(max_length=50, blank=True, null=True)
 
-#    hindrances = models.BooleanField(default=False)
     dark_ents = models.BooleanField(default=False)
     attacks = models.BooleanField(default=False)
     societal = models.BooleanField(default=False)
@@ -169,7 +168,6 @@ class Location_Worksheet(models.Model):
 
     date = models.DateField
 
-#    issues = models.BooleanField(default=False)
     unwanted_energies = models.BooleanField(default=False)
     stuck_souls = models.BooleanField(default=False)
     portals = models.BooleanField(default=False)
